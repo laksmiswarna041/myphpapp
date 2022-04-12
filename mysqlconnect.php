@@ -1,7 +1,7 @@
 <?php
 echo '<h4> Welcome!, This site is up and running. </h4>';
 $dbhost = db_host;
-$dbname = 'sgb_mysql_db';
+$dbname = 'sgb_db';
 $username = mysql_user;
 $password = mysql_password;
 
