@@ -1,46 +1,65 @@
 <?php
-echo '<h4> Welcome!, This site is up and running. </h4>';
-$dbhost = db_host;
-$dbname = 'sgb_db';
-$username = mysql_user;
-$password = mysql_password;
+
+echo "<h2>Welcome! This site is up and running.</h2>";
+
+$dbhost = "localhost";
+$dbname = "sgb_db";
+$username = "sgb";
+$password = "swarna99@GB";
 
 $conn = new mysqli($dbhost, $username, $password, $dbname);
-if($conn->connect_error) {
-                die('Could not connect: ' . $conn->connect_error);
-}
-echo '--------- MySQL Connected successfully -------<br>';
 
-$sql1 = "CREATE TABLE IF NOT EXISTS Names( id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50));";
+if ($conn->connect_error) {
+    die("Could not connect: " . $conn->connect_error);
+}
+
+echo "MySQL Connected successfully!<br><br>";
+
+$sql1 = "CREATE TABLE IF NOT EXISTS Names (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50)
+)";
+
 if ($conn->query($sql1) === TRUE) {
-          echo "\nTable Names created successfully <br>";
-              
-              $sql = "insert into Names (name) values ('Swarna');";
-              $sql = "insert into Names (name) values ('Lakshmi');";
-              //$sql .= "insert into persons (name,city) values ('Brevis','Chennai');";
-              //$sql .= "insert into persons (name,city) values ('Milne','Bangalore');";
-              if ($conn->query($sql) === TRUE) {
-              echo "\n New record created successfully <br>";
-              } 
-                  else {
-                    echo "Error: " . $sql . "<br>" . $conn->error;
-                    }
-
+    echo "Table Names created successfully.<br><br>";
 } else {
-          echo "Error creating table: " . $conn->error;
+    die("Error creating table: " . $conn->error);
 }
 
-echo 'List of Names <br>';
-$sql = "SELECT * FROM Names;";
+
+// Insert names only if they don't already exist
+$sql = "INSERT INTO Names (name)
+        SELECT 'Swarna'
+        WHERE NOT EXISTS (
+            SELECT 1 FROM Names WHERE name = 'Swarna'
+        )";
+
+$conn->query($sql);
+
+$sql = "INSERT INTO Names (name)
+        SELECT 'Lakshmi'
+        WHERE NOT EXISTS (
+            SELECT 1 FROM Names WHERE name = 'Lakshmi'
+        )";
+
+$conn->query($sql);
+
+
+echo "<h3>List of Names</h3>";
+
+$sql = "SELECT * FROM Names";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-          // output data of each row
-           while($row = $result->fetch_assoc()) {
-               echo " Name: " . $row["name"]. "<br>";
-                 }
-            } else {
-                   echo "0 results";
-                   }
+
+    while ($row = $result->fetch_assoc()) {
+        echo "Name: " . $row["name"] . "<br>";
+    }
+
+} else {
+    echo "0 results";
+}
+
 $conn->close();
+
 ?>
